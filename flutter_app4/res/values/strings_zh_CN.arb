@@ -1,0 +1,17 @@
+{
+  "appName": "zh_CN_NoteKeeper",
+  "titleNoteList": "zh_CN_Notes",
+  "titleNoteDetail": "zh_CN_Note Detail",
+  "titleAddNote": "zh_CN_Add Note",
+  "tooltipAddFab": "zh_CN_Tap to Add",
+  "priorityHigh": "zh_CN_High",
+  "priorityMedium": "zh_CN_Medium",
+  "priorityLow": "zh_CN_Low",
+  "labelNoteTitle": "zh_CN_Title",
+  "hintNoteTitle": "zh_CN_Enter a title",
+  "labelNoteDescription": "zh_CN_Description",
+  "hintNoteDescription": "zh_CN_Enter a description",
+  "save": "zh_CN_Save",
+  "delete": "zh_CN_Delete"
+}
+

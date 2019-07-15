@@ -1,0 +1,17 @@
+{
+  "appName": "zh_TW_NoteKeeper",
+  "titleNoteList": "zh_TW_Notes",
+  "titleNoteDetail": "zh_TW_Note Detail",
+  "titleAddNote": "zh_TW_Add Note",
+  "tooltipAddFab": "zh_TW_Tap to Add",
+  "priorityHigh": "zh_TW_High",
+  "priorityMedium": "zh_TW_Medium",
+  "priorityLow": "zh_TW_Low",
+  "labelNoteTitle": "zh_TW_Title",
+  "hintNoteTitle": "zh_TW_Enter a title",
+  "labelNoteDescription": "zh_TW_Description",
+  "hintNoteDescription": "zh_TW_Enter a description",
+  "save": "zh_TW_Save",
+  "delete": "zh_TW_Delete"
+}
+

@@ -1,0 +1,17 @@
+{
+  "appName": "fr_NoteKeeper",
+  "titleNoteList": "fr_Notes",
+  "titleNoteDetail": "fr_Note Detail",
+  "titleAddNote": "fr_Add Note",
+  "tooltipAddFab": "fr_Tap to Add",
+  "priorityHigh": "fr_High",
+  "priorityMedium": "fr_Medium",
+  "priorityLow": "fr_Low",
+  "labelNoteTitle": "fr_Title",
+  "hintNoteTitle": "fr_Enter a title",
+  "labelNoteDescription": "fr_Description",
+  "hintNoteDescription": "fr_Enter a description",
+  "save": "fr_Save",
+  "delete": "fr_Delete"
+}
+

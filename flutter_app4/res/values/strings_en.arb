@@ -1,0 +1,23 @@
+{
+  "appName": "NoteKeeper",
+  "titleNoteList": "Notes",
+  "titleNoteDetail": "Note Detail",
+  "titleAddNote": "Add Note",
+  "tooltipAddFab": "Tap to Add",
+  "priorityHigh": "High",
+  "priorityMedium": "Medium",
+  "priorityLow": "Low",
+  "labelNoteTitle": "Title",
+  "hintNoteTitle": "Enter a title",
+  "labelNoteDescription": "Description",
+  "hintNoteDescription": "Enter a description",
+  "save": "Save",
+  "delete": "Delete",
+  "errorNoInternet": "Unable to connect",
+  "titleTestScreen": "Test Screen",
+  "debugTestAction1": "Test 1",
+  "testAction1": "testAction1",
+  "genres": "Genres",
+  "retry": "Retry"
+}
+
