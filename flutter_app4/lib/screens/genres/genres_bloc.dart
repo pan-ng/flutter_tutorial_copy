@@ -3,24 +3,30 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_app4/api/http.dart';
+import 'package:flutter_app4/app_bloc.dart';
 import 'package:flutter_app4/exception.dart';
 import 'package:flutter_app4/model/genre.dart';
 import 'package:flutter_app4/model/genres.dart';
-import 'package:flutter_app4/model/state.dart';
 import 'package:flutter_app4/res.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GenresBloc extends Bloc<GenresEvent, GenresState> {
   @override
-  GenresState get initialState => GenresMessageState(R.string.retry);
+  GenresState get initialState => GenresStateContent(appBloc.currentState.genres);
 
   final GenresAPI genresAPI;
+  final AppBloc appBloc;
 
-  GenresBloc({@required this.genresAPI});
+  GenresBloc({@required this.appBloc, @required this.genresAPI});
 
   @override
   Stream<GenresState> mapEventToState(GenresEvent event) async* {
-    print("mapEventToState : ${event}");
-    if (event is OnBuild || event is OnRefresh) {
+//    if(currentState is GenresStateContent){
+//      GenresStateContent state = currentState;
+//      print("mapEventToState : already has data, ${state.genres?.pop?.name?.en}");
+//    }
+    print("mapEventToState : currentState = ${currentState} ${event}");
+    if (event is GenresEventInit || event is GenresEventRefresh) {
       yield* _loadGenre(currentState);
     } else {
       yield currentState;
@@ -29,22 +35,21 @@ class GenresBloc extends Bloc<GenresEvent, GenresState> {
 
   Stream<GenresState> _loadGenre(GenresState state) async* {
     try {
-      print("_loadGenre : loading");
-      yield GenresLoadingState();
-    //  print("_loadGenre : wait 2 sec");
-     // await Future.delayed(Duration(seconds: 2));
+      print("_loadGenre : loading ");
+      yield GenresStateLoading();
+      //  print("_loadGenre : wait 2 sec");
+      // await Future.delayed(Duration(seconds: 2));
       print("_loadGenre : getGenres");
       var genres = await genresAPI.getGenres();
 
       print("_loadGenre : visible");
-      yield GenresVisibleState(genres);
+      yield GenresStateContent(genres);
 
+      appBloc.dispatch(AppEventNewData(genres: genres));
     } catch (e) {
-      print("_loadGenre : error");
-      if(e is AppException) {
-        yield GenresMessageState((context, [args]) {
-          return e.displayMessage(context: context);
-        });
+      print("_loadGenre : error $e");
+      if (e is AppException) {
+        yield GenresStateError(e);
       }
     }
   }
@@ -52,9 +57,10 @@ class GenresBloc extends Bloc<GenresEvent, GenresState> {
 
 class GenresState {}
 
-class GenresLoadingState extends GenresState implements BlocLoadingState {
+class GenresStateLoading extends GenresState {
   int id;
-  GenresLoadingState(){
+
+  GenresStateLoading() {
     id = Random().nextInt(1000000);
   }
 
@@ -64,33 +70,29 @@ class GenresLoadingState extends GenresState implements BlocLoadingState {
   }
 }
 
-class GenresMessageState extends GenresState implements BlocMessageState {
-  final ContextString message;
+class GenresStateError extends GenresState {
+  final AppException exception;
 
-  GenresMessageState(this.message);
+  GenresStateError(this.exception);
 
   @override
   String displayMessage(BuildContext context) {
-    return message(context);
+    return exception.displayMessage(context: context);
   }
 }
 
-
-
-
-
-class GenresVisibleState extends GenresState implements BlockContentState {
+class GenresStateContent extends GenresState {
   final Genres genres;
 
-  GenresVisibleState(this.genres);
+  GenresStateContent(this.genres);
 
   GenresState copyWith({Genres genres}) {
-    return GenresVisibleState(genres ?? this.genres);
+    return GenresStateContent(genres ?? this.genres);
   }
 }
 
 class GenresEvent {}
 
-class OnBuild extends GenresEvent {}
+class GenresEventInit extends GenresEvent {}
 
-class OnRefresh extends GenresEvent {}
+class GenresEventRefresh extends GenresEvent {}

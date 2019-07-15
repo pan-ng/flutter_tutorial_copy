@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app4/api/http.dart';
+import 'package:flutter_app4/app_bloc.dart';
 import 'package:flutter_app4/model/genres.dart';
-import 'package:flutter_app4/model/state.dart';
 import 'package:flutter_app4/res.dart';
 import 'package:flutter_app4/screens/genres/genres_bloc.dart';
 import 'package:flutter_app4/utils/date_time.dart';
@@ -10,6 +10,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
 
 class GenresPage extends StatefulWidget {
+  final AppBloc appBloc;
+
+  GenresPage(this.appBloc);
+
   @override
   State<StatefulWidget> createState() => GenresPageState();
 }
@@ -21,8 +25,8 @@ class GenresPageState extends State<GenresPage> {
   @override
   void initState() {
     id = Random().nextInt(100000);
-    _genresBloc = GenresBloc(genresAPI: GenresAPI());
-    _genresBloc.dispatch(OnBuild());
+    _genresBloc = GenresBloc(appBloc: widget.appBloc, genresAPI: GenresAPI());
+    _genresBloc.dispatch(GenresEventInit());
     super.initState();
   }
 
@@ -43,7 +47,7 @@ class GenresPageState extends State<GenresPage> {
           children: <Widget>[
             _buildBody(context),
             R.style.createTextRaisedButton(context, "Reload", () {
-              _genresBloc.dispatch(OnRefresh());
+              _genresBloc.dispatch(GenresEventRefresh());
             })
           ],
         ),
@@ -58,13 +62,11 @@ class GenresPageState extends State<GenresPage> {
         bloc: _genresBloc,
         builder: (context, genreState) {
           print("buillderId = ${buillderId} instance:${id} _buildBody: genreState = ${genreState}");
-          if (genreState is BlocLoadingState) {
+          if (genreState is GenresStateLoading) {
             return _buildLoadingGenres(context);
-          } else if (genreState is GenresMessageState) {
-            return _buildReloadGenres(context, (context, [args]) {
-              return genreState.displayMessage(context);
-            });
-          } else if (genreState is GenresVisibleState) {
+          } else if (genreState is GenresStateError) {
+            return _buildGenresLoadError(context, genreState);
+          } else if (genreState is GenresStateContent) {
             return _buildListGenres(context, genreState.genres);
           } else {
             return _buildLoadingGenres(context);
@@ -73,10 +75,14 @@ class GenresPageState extends State<GenresPage> {
   }
 
   Widget _buildListGenres(BuildContext context, Genres genres) {
-    return Text(
-      "${genres.toJson().toString()}",
-      style: TextStyle(fontSize: R.fontSize.textField.px),
-    );
+    if (genres == null) {
+      return _buildReloadGenres(context, "No data, tap to reload");
+    } else {
+      return Text(
+        "${genres.pop.name.en}",
+        style: TextStyle(fontSize: R.fontSize.textField.px),
+      );
+    }
   }
 
   Widget _buildLoadingGenres(BuildContext context) {
@@ -86,18 +92,22 @@ class GenresPageState extends State<GenresPage> {
     );
   }
 
-  Widget _buildReloadGenres(BuildContext context, ContextString message) {
+  Widget _buildGenresLoadError(BuildContext context, GenresStateError errorState) {
+    return _buildReloadGenres(context, errorState.displayMessage(context));
+  }
+
+  Widget _buildReloadGenres(BuildContext context, String message) {
     return Container(
       child: Center(
         child: Column(
           children: <Widget>[
             Text(
-              "${message(context)}",
+              message,
               style: TextStyle(fontSize: R.fontSize.textField.px),
             ),
             SizedBox(height: R.dimen.margin),
             R.style.createTextRaisedButton(context, R.string.retry(context), () {
-              _genresBloc.dispatch(OnRefresh());
+              _genresBloc.dispatch(GenresEventRefresh());
             })
           ],
         ),

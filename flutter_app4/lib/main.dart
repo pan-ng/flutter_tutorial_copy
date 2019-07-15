@@ -4,6 +4,7 @@ import 'package:flutter_app4/pref.dart';
 import 'package:flutter_app4/screens/genres/genres_screen.dart';
 import 'package:flutter_app4/screens/test_screen.dart';
 import 'package:flutter_app4/app_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
@@ -39,6 +40,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    BlocProvider.of<AppBloc>(context).dispatch(AppEventInitialize());
+
     return MaterialApp(
       locale: Locale("en"),
       supportedLocales: S.delegate.supportedLocales,
@@ -51,7 +55,7 @@ class MyApp extends StatelessWidget {
       title: "Notes",
       onGenerateTitle: (BuildContext context) => R.string.appName(context),
       theme: R.style.appTheme(),
-      home: GenresPage(),
+      home: GenresPage(BlocProvider.of<AppBloc>(context)),
       //  home: NoteList(),
     );
   }
